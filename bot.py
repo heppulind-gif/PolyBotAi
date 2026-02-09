@@ -1,26 +1,32 @@
-# bot.py
+# bot.py (Optimized for responsiveness)
 import asyncio
-from telegram import Bot, Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram import Update, Bot
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from trade_manager import TradeManager
 from analytics import Analytics
 from sandbox import Sandbox
 from utils import EmergencyHandler
 
-# Bot configuration
-TOKEN = "8146985739:AAFU0kQ3U0llvEPepQLk4Cy1tM5H1ZzeL9c"  # replace with your token
-bot = Bot(TOKEN) 
+# ------------------------
+# Configuration
+# ------------------------
+TOKEN = "8146985739" # keep quotes, no extra spaces
+
+# Initialize core modules
 trade_manager = TradeManager()
 analytics = Analytics()
 sandbox = Sandbox()
 emergency = EmergencyHandler(trade_manager)
 
-# Telegram Handlers
+# ------------------------
+# Telegram Command Handlers
+# ------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Welcome to PolyPulse Bot! Use /trade to execute, /status for dashboard.")
+    await update.message.reply_text(
+        "Welcome to PolyPulse Bot!\nUse /trade to execute, /status for dashboard, /kill for emergency stop."
+    )
 
 async def trade(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Execute a 1-tap trade
     result = await trade_manager.execute_trade()
     await update.message.reply_text(result)
 
@@ -32,19 +38,28 @@ async def kill(update: Update, context: ContextTypes.DEFAULT_TYPE):
     emergency.activate_kill_switch()
     await update.message.reply_text("Emergency Kill Switch activated. All trading paused.")
 
-# Setup Telegram application
+# Test command to verify bot responsiveness
+async def ping(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Pong! ✅ Bot is responsive.")
+
+# ------------------------
+# Setup Telegram Application
+# ------------------------
 app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("trade", trade))
 app.add_handler(CommandHandler("status", status))
 app.add_handler(CommandHandler("kill", kill))
+app.add_handler(CommandHandler("ping", ping))
 
-# Main async loop
+# ------------------------
+# Main Async Loop
+# ------------------------
 async def main():
-    # Start sandbox in background
+    # Run sandbox and trade manager in background tasks
     asyncio.create_task(sandbox.run_simulations())
-    # Start trade manager monitoring loop
     asyncio.create_task(trade_manager.monitor_markets())
+
     # Start Telegram bot
     await app.start()
     await app.updater.start_polling()
