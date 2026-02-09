@@ -8,8 +8,8 @@ from sandbox import Sandbox
 from utils import EmergencyHandler
 
 # Bot configuration
-TOKEN = "8146985739:YOUR_BOT_TOKEN_HERE"  # replace with your token
-bot = Bot(TOKEN)
+TOKEN = "8146985739:AAFU0kQ3U0llvEPepQLk4Cy1tM5H1ZzeL9c"  # replace with your token
+bot = Bot(8146985739:AAFU0kQ3U0llvEPepQLk4Cy1tM5H1ZzeL9c) 
 trade_manager = TradeManager()
 analytics = Analytics()
 sandbox = Sandbox()
