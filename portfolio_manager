@@ -1,0 +1,10 @@
+# portfolio_manager.py
+import random
+
+class PortfolioManager:
+    def __init__(self):
+        # Example starting balance in ETH
+        self.balance = 1.0
+        self.stake_insurance = 0.05  # 5% reserved to protect balance
+        self.max_consecutive_losses = 3
+        self
